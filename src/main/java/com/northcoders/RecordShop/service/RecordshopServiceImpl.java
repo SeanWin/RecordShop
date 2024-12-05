@@ -3,11 +3,13 @@ package com.northcoders.RecordShop.service;
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.repository.RecordshopRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class RecordshopServiceImpl implements RecordshopService{
 
     @Autowired

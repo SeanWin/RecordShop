@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -34,8 +35,8 @@ class RecordshopControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("GET /api/v1/recordshop")
-    void GET_allAlbums() throws Exception {
+    @DisplayName("GET all albums")
+    void test_getAllAlbums() throws Exception {
         // given
         List<Album> albums = new ArrayList<>();
         Album album1 = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
@@ -58,5 +59,38 @@ class RecordshopControllerTest {
                 .andExpect(jsonPath("$[0].releaseDate", is("2000-05-15")))
                 .andExpect(jsonPath("$[1].releaseDate", is("2010-08-22")));
 
+    }
+
+    @Test
+    @DisplayName("GET album by id positive")
+    void test_getAlbumById_positive() throws Exception {
+        // given
+        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        given(recordshopService.getAlbumById(1L)).willReturn(Optional.of(album));
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/{id}", 1L));
+
+        // then
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is(album.getName())))
+                .andExpect(jsonPath("$.artist", is(album.getArtist())));
+    }
+
+    @Test
+    @DisplayName("GET album by id negative")
+    void test_getAlbumById_negative() throws Exception {
+        // given
+        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        given(recordshopService.getAlbumById(1L)).willReturn(Optional.empty());
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/{id}", 1L));
+
+        // then
+        response.andExpect(status().isNotFound())
+                .andDo(print());
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.hamcrest.CoreMatchers.is;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest // Use @WebMvcTest instead of @SpringBootTest
+@WebMvcTest
 class RecordshopControllerTest {
 
-    @MockBean // Mock the service bean
+    @MockBean
     private RecordshopService recordshopService;
 
     @Autowired
@@ -34,11 +35,11 @@ class RecordshopControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/recordshop")
-    void getJokes() throws Exception {
+    void GET_allAlbums() throws Exception {
         // given
         List<Album> albums = new ArrayList<>();
-        Album album1 = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseYear(2000).stockCount(1).price(19.99).build();
-        Album album2 = Album.builder().id(2L).name("name2").artist("artist2").genre(Genre.CLASSICAL).releaseYear(2000).stockCount(2).price(29.99).build();
+        Album album1 = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        Album album2 = Album.builder().id(2L).name("name2").artist("artist2").genre(Genre.CLASSICAL).releaseDate(LocalDate.of(2010, 8, 22)).stockCount(2).price(29.99).build();
         albums.add(album1);
         albums.add(album2);
         given(recordshopService.getAllAlbums()).willReturn(albums);
@@ -53,7 +54,9 @@ class RecordshopControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("name"))
                 .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("name2"));
+                .andExpect(jsonPath("$[1].name").value("name2"))
+                .andExpect(jsonPath("$[0].releaseDate", is("2000-05-15")))
+                .andExpect(jsonPath("$[1].releaseDate", is("2010-08-22")));
 
     }
 }

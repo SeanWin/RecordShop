@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 
 @Entity
 @Data
@@ -35,7 +37,7 @@ public class Album {
 
     @NotNull
     @Column(nullable = false)
-    private int releaseYear;
+    private LocalDate releaseDate;
 
     @NotNull
     @Column(nullable = false)

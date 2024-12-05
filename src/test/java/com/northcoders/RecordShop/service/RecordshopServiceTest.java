@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +30,8 @@ class RecordshopServiceTest {
     void test_GetAllAlbums() {
         //arrange
         List<Album> albums = new ArrayList<>();
-        Album album1 = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseYear(2000).stockCount(1).price(19.99d).build();
-        Album album2 = Album.builder().id(2L).name("name2").artist("artist2").genre(Genre.CLASSICAL).releaseYear(2000).stockCount(2).price(29.99d).build();
+        Album album1 = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        Album album2 = Album.builder().id(2L).name("name2").artist("artist2").genre(Genre.CLASSICAL).releaseDate(LocalDate.of(2010, 8, 22)).stockCount(2).price(29.99d).build();
         albums.add(album1);
         albums.add(album2);
         when(recordshopRepository.findAll()).thenReturn(albums);

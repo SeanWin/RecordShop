@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RecordshopServiceImpl implements RecordshopService{
 
@@ -17,5 +18,10 @@ public class RecordshopServiceImpl implements RecordshopService{
         List<Album> albums = new ArrayList<>();
         recordshopRepository.findAll().forEach(albums::add);
         return albums;
+    }
+
+    @Override
+    public Optional<Album> getAlbumById(Long id) {
+        return recordshopRepository.findById(id);
     }
 }

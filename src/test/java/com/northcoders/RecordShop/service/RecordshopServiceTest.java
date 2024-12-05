@@ -77,4 +77,18 @@ class RecordshopServiceTest {
         assertThat(result).isEmpty();
     }
 
+    @DisplayName("Test for insertAlbum method")
+    @Test
+    public void test_insertAlbum(){
+        // given
+        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        given(recordshopRepository.save(album)).willReturn(album);
+
+        //when
+        Album result = recordshopServiceImpl.insertAlbum(album);
+
+        //then
+        assertThat(result).isEqualTo(album);
+    }
+
 }

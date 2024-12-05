@@ -24,4 +24,9 @@ public class RecordshopServiceImpl implements RecordshopService{
     public Optional<Album> getAlbumById(Long id) {
         return recordshopRepository.findById(id);
     }
+
+    @Override
+    public Album insertAlbum(Album album) {
+        return recordshopRepository.save(album);
+    }
 }

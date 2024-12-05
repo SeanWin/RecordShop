@@ -40,6 +40,7 @@ build/
 
 ### Spring Configuration Files ###
 application.properties
+application-dev.properties
 
 ### JVM Crash Logs ###
 hs_err_pid*

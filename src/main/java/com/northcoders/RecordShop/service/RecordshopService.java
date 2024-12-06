@@ -13,4 +13,6 @@ public interface RecordshopService {
     Album insertAlbum(Album album);
 
     Album updateAlbumById(Long id, Album newAlbum);
+
+    void deleteAlbumById(Long id);
 }

@@ -40,4 +40,12 @@ public class RecordshopServiceImpl implements RecordshopService{
         album.setStockCount(newAlbum.getStockCount());
         return recordshopRepository.save(album);
     }
+
+    @Override
+    public void deleteAlbumById(Long id) {
+        if(!recordshopRepository.existsById(id)){
+            throw new AlbumNotFoundException("Album not found");
+        }
+        recordshopRepository.deleteById(id);
+    }
 }

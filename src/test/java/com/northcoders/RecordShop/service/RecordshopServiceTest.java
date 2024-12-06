@@ -131,4 +131,34 @@ class RecordshopServiceTest {
         verify(recordshopRepository, never()).save(any(Album.class));
     }
 
+    @DisplayName("positive test for deleteAlbumById method")
+    @Test
+    public void test_deleteAlbumById_positive(){
+        // given
+        long id = 1L;
+        given(recordshopRepository.existsById(id)).willReturn(true);
+
+        // when
+        recordshopServiceImpl.deleteAlbumById(id);
+
+        // then
+        verify(recordshopRepository, times(1)).existsById(id);
+        verify(recordshopRepository, times(1)).deleteById(id);
+    }
+
+    @DisplayName("Negative test for deleteAlbumById method")
+    @Test
+    public void test_deleteAlbumById_negative() {
+        // given
+        long id = 1L;
+        given(recordshopRepository.existsById(id)).willReturn(false);
+
+        // when
+        assertThrows(AlbumNotFoundException.class, () -> recordshopServiceImpl.deleteAlbumById(id));
+
+        //then
+        verify(recordshopRepository, times(1)).existsById(id);
+        verify(recordshopRepository, never()).deleteById(id);
+    }
+
 }

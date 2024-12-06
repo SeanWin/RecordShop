@@ -11,4 +11,6 @@ public interface RecordshopService {
     Optional<Album> getAlbumById(Long id);
 
     Album insertAlbum(Album album);
+
+    Album updateAlbumById(Long id, Album newAlbum);
 }

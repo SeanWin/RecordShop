@@ -1,5 +1,6 @@
 package com.northcoders.RecordShop.service;
 
+import com.northcoders.RecordShop.Exception.AlbumNotFoundException;
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.model.Genre;
 import com.northcoders.RecordShop.repository.RecordshopRepository;
@@ -15,8 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DataJpaTest
 class RecordshopServiceTest {
@@ -89,6 +91,44 @@ class RecordshopServiceTest {
 
         //then
         assertThat(result).isEqualTo(album);
+    }
+
+    @DisplayName("positive test for updateAlbumById method")
+    @Test
+    public void test_updateAlbum_positive(){
+        // given
+        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        given(recordshopRepository.save(album)).willReturn(album);
+        given(recordshopRepository.findById(album.getId())).willReturn(Optional.of(album));
+        album.setStockCount(2);
+        album.setPrice(29.99d);
+        // when
+        Album updatedAlbum = recordshopServiceImpl.updateAlbumById(album.getId(), album);
+
+        // then
+        assertThat(updatedAlbum.getStockCount()).isEqualTo(2);
+        assertThat(updatedAlbum.getPrice()).isEqualTo(29.99d);
+    }
+
+    @DisplayName("Negative test for updateAlbumById method")
+    @Test
+    public void test_updateAlbumById_negative() {
+        // given
+        Long nonExistentAlbumId = 99L;
+        Album updatedAlbum = Album.builder()
+                .price(29.99d)
+                .stockCount(2)
+                .build();
+
+        given(recordshopRepository.findById(nonExistentAlbumId)).willReturn(Optional.empty());
+
+        // when
+        assertThrows(AlbumNotFoundException.class, () -> {
+            recordshopServiceImpl.updateAlbumById(nonExistentAlbumId, updatedAlbum);
+        });
+
+        // then
+        verify(recordshopRepository, never()).save(any(Album.class));
     }
 
 }

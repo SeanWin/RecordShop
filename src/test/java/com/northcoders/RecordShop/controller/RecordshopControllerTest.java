@@ -1,16 +1,24 @@
 package com.northcoders.RecordShop.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.model.Genre;
 import com.northcoders.RecordShop.service.RecordshopService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -20,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +42,13 @@ class RecordshopControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    private ObjectMapper mapper;
+
+    @BeforeEach
+    public void setup(){
+        mapper = new ObjectMapper();
+        this.mapper.registerModule(new JavaTimeModule());
+    }
 
     @Test
     @DisplayName("GET all albums")
@@ -92,5 +108,21 @@ class RecordshopControllerTest {
         // then
         response.andExpect(status().isNotFound())
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("POST album positive")
+    void test_createAlbum_positive() throws Exception {
+        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+
+        when(recordshopService.insertAlbum(any(Album.class))).thenReturn(album);
+
+        this.mockMvc.perform(
+                post("/api/v1/recordshop")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(album)))
+                .andExpect(status().isCreated());
+
+        verify(recordshopService,times(1)).insertAlbum(any(Album.class));
     }
 }

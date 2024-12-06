@@ -2,16 +2,16 @@ package com.northcoders.RecordShop.controller;
 
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.service.RecordshopService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("api/v1/recordshop")
 public class RecordshopController {
@@ -30,4 +30,12 @@ public class RecordshopController {
                 .map(album -> new ResponseEntity<>(album, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+
+    @PostMapping
+    public ResponseEntity<Album> createAlbum(@Valid @RequestBody Album album){
+        Album newAlbum = recordshopService.insertAlbum(album);
+        return new ResponseEntity<>(newAlbum, HttpStatus.CREATED);
+    }
+
 }

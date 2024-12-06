@@ -1,6 +1,9 @@
 package com.northcoders.RecordShop.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,30 +23,32 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    private Long id;
+    public Long id;
 
-    @NotNull
     @Column(nullable = false)
-    private String name;
+    @NotBlank(message = "Name is required")
+    public String name;
 
-    @NotNull
     @Column(nullable = false)
-    private String artist;
+    @NotBlank(message = "Artist is required")
+    public String artist;
 
-    @NotNull
+    @Column(nullable = false)
+    @NotNull(message = "Genre is required")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Genre genre;
+    public Genre genre;
 
-    @NotNull
     @Column(nullable = false)
-    private LocalDate releaseDate;
+    @NotNull(message = "Release date is required")
+    public LocalDate releaseDate;
 
-    @NotNull
     @Column(nullable = false)
-    private int stockCount;
+    @NotNull(message = "Stock count is required")
+    @Min(value = 0, message = "Stock count must be at least 0")
+    public Integer stockCount;;
 
-    @NotNull
     @Column(nullable = false)
-    private double price;
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
+    public Double price;
 }

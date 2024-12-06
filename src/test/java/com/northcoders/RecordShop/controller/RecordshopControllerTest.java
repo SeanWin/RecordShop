@@ -16,9 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -169,5 +169,41 @@ class RecordshopControllerTest {
         //then
         response.andExpect(status().isNotFound())
                 .andDo(print());
+    }
+
+    @DisplayName("DELETE album positive")
+    @Test
+    public void test_deleteAlbum_positive() throws Exception{
+        //given
+        long id= 1L;
+
+        willDoNothing().given(recordshopService).deleteAlbumById(id);
+
+       //when
+        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/{id}", id));
+
+        //then
+        response.andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @DisplayName("Negative test for deleteAlbumById method")
+    @Test
+    public void test_deleteAlbumById_negative() throws Exception {
+        // given
+        long id = 1L;
+        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
+                .stockCount(1).price(19.99d).build();
+        doThrow(new AlbumNotFoundException("Album not found")).when(recordshopService).deleteAlbumById(id);
+
+        //when
+        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(album)));
+
+        //then
+        response.andExpect(status().isNotFound())
+                .andDo(print());
+        verify(recordshopService, times(1)).deleteAlbumById(id);
     }
 }

@@ -27,7 +27,7 @@ class AlbumServiceTest {
     private AlbumRepository albumRepository;
 
     @InjectMocks
-    private AlbumServiceImpl recordshopServiceImpl;
+    private AlbumServiceImpl albumServiceImpl;
 
     @Test
     @DisplayName("getAllAlbums responds with a list of all albums")
@@ -41,7 +41,7 @@ class AlbumServiceTest {
         when(albumRepository.findAll()).thenReturn(albums);
 
         //act
-        List<Album> result = recordshopServiceImpl.getAllAlbums();
+        List<Album> result = albumServiceImpl.getAllAlbums();
 
         //assert
         assertThat(result).hasSize(2);
@@ -56,7 +56,7 @@ class AlbumServiceTest {
         given(albumRepository.findById(1L)).willReturn(Optional.of(album));
 
         // when
-        Album savedAlbum = recordshopServiceImpl.getAlbumById(album.getId()).get();
+        Album savedAlbum = albumServiceImpl.getAlbumById(album.getId()).get();
 
         // then
         assertThat(savedAlbum).isNotNull();
@@ -73,7 +73,7 @@ class AlbumServiceTest {
         given(albumRepository.findById(albumId)).willReturn(Optional.empty());
 
         // when
-        Optional<Album> result = recordshopServiceImpl.getAlbumById(albumId);
+        Optional<Album> result = albumServiceImpl.getAlbumById(albumId);
 
         // then
         assertThat(result).isEmpty();
@@ -87,7 +87,7 @@ class AlbumServiceTest {
         given(albumRepository.save(album)).willReturn(album);
 
         //when
-        Album result = recordshopServiceImpl.insertAlbum(album);
+        Album result = albumServiceImpl.insertAlbum(album);
 
         //then
         assertThat(result).isEqualTo(album);
@@ -103,7 +103,7 @@ class AlbumServiceTest {
         album.setStockCount(2);
         album.setPrice(29.99d);
         // when
-        Album updatedAlbum = recordshopServiceImpl.updateAlbumById(album.getId(), album);
+        Album updatedAlbum = albumServiceImpl.updateAlbumById(album.getId(), album);
 
         // then
         assertThat(updatedAlbum.getStockCount()).isEqualTo(2);
@@ -124,7 +124,7 @@ class AlbumServiceTest {
 
         // when
         assertThrows(AlbumNotFoundException.class, () -> {
-            recordshopServiceImpl.updateAlbumById(nonExistentAlbumId, updatedAlbum);
+            albumServiceImpl.updateAlbumById(nonExistentAlbumId, updatedAlbum);
         });
 
         // then
@@ -139,7 +139,7 @@ class AlbumServiceTest {
         given(albumRepository.existsById(id)).willReturn(true);
 
         // when
-        recordshopServiceImpl.deleteAlbumById(id);
+        albumServiceImpl.deleteAlbumById(id);
 
         // then
         verify(albumRepository, times(1)).existsById(id);
@@ -154,7 +154,7 @@ class AlbumServiceTest {
         given(albumRepository.existsById(id)).willReturn(false);
 
         // when
-        assertThrows(AlbumNotFoundException.class, () -> recordshopServiceImpl.deleteAlbumById(id));
+        assertThrows(AlbumNotFoundException.class, () -> albumServiceImpl.deleteAlbumById(id));
 
         //then
         verify(albumRepository, times(1)).existsById(id);

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("api/v1/recordshop")
+@RequestMapping("api/v1/recordshop/albums")
 public class AlbumController {
 
     @Autowired

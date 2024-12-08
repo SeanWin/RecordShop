@@ -62,7 +62,7 @@ class AlbumControllerTest {
         given(albumService.getAllAlbums()).willReturn(albums);
 
         //when
-        ResultActions response = mockMvc.perform(get("/api/v1/recordshop"));
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums"));
 
         //then
         response.andExpect(status().isOk())
@@ -85,7 +85,7 @@ class AlbumControllerTest {
         given(albumService.getAlbumById(1L)).willReturn(Optional.of(album));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/{id}", 1L));
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums/{id}", 1L));
 
         // then
         response.andExpect(status().isOk())
@@ -103,7 +103,7 @@ class AlbumControllerTest {
         given(albumService.getAlbumById(1L)).willReturn(Optional.empty());
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/{id}", 1L));
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums/{id}", 1L));
 
         // then
         response.andExpect(status().isNotFound())
@@ -118,7 +118,7 @@ class AlbumControllerTest {
         when(albumService.insertAlbum(any(Album.class))).thenReturn(album);
 
         this.mockMvc.perform(
-                post("/api/v1/recordshop")
+                post("/api/v1/recordshop/albums")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(album)))
                 .andExpect(status().isCreated());
@@ -139,7 +139,7 @@ class AlbumControllerTest {
         given(albumService.updateAlbumById(eq(id), any(Album.class))).willReturn(updatedAlbum);
 
         //when
-        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/{id}", id)
+        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/albums/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(updatedAlbum)));
 
@@ -162,7 +162,7 @@ class AlbumControllerTest {
         given(albumService.updateAlbumById(eq(id), any(Album.class))).willThrow(new AlbumNotFoundException("Album not found"));
 
         //when
-        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/{id}", id)
+        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/albums/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(updatedAlbum)));
 
@@ -180,7 +180,7 @@ class AlbumControllerTest {
         willDoNothing().given(albumService).deleteAlbumById(id);
 
        //when
-        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/{id}", id));
+        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/albums/{id}", id));
 
         //then
         response.andExpect(status().isNoContent())
@@ -197,7 +197,7 @@ class AlbumControllerTest {
         doThrow(new AlbumNotFoundException("Album not found")).when(albumService).deleteAlbumById(id);
 
         //when
-        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/{id}", id)
+        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/albums/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(album)));
 

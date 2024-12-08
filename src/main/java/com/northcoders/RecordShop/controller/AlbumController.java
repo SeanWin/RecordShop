@@ -1,7 +1,7 @@
 package com.northcoders.RecordShop.controller;
 
 import com.northcoders.RecordShop.model.Album;
-import com.northcoders.RecordShop.service.RecordshopService;
+import com.northcoders.RecordShop.service.AlbumService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,19 +14,19 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("api/v1/recordshop")
-public class RecordshopController {
+public class AlbumController {
 
     @Autowired
-    RecordshopService recordshopService;
+    AlbumService albumService;
 
     @GetMapping
     public ResponseEntity<List<Album>> getAllAlbums() {
-        return new ResponseEntity<>(recordshopService.getAllAlbums(), HttpStatus.OK);
+        return new ResponseEntity<>(albumService.getAllAlbums(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Album> getAlbumById(@PathVariable("id") long id) {
-        return recordshopService.getAlbumById(id)
+        return albumService.getAlbumById(id)
                 .map(album -> new ResponseEntity<>(album, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -34,13 +34,13 @@ public class RecordshopController {
 
     @PostMapping
     public ResponseEntity<Album> createAlbum(@Valid @RequestBody Album album){
-        Album newAlbum = recordshopService.insertAlbum(album);
+        Album newAlbum = albumService.insertAlbum(album);
         return new ResponseEntity<>(newAlbum, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Album> updateAlbum(@PathVariable("id") long id, @RequestBody Album album){
-        Album updatedAlbum = recordshopService.updateAlbumById(id, album);
+        Album updatedAlbum = albumService.updateAlbumById(id, album);
         return new ResponseEntity<>(updatedAlbum, HttpStatus.OK);
 
     }
@@ -48,7 +48,7 @@ public class RecordshopController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAlbum(@PathVariable("id") long id){
 
-        recordshopService.deleteAlbumById(id);
+        albumService.deleteAlbumById(id);
 
         return new ResponseEntity<>("Album deleted successfully!.", HttpStatus.NO_CONTENT);
 

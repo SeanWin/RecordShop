@@ -1,4 +1,4 @@
-package com.northcoders.RecordShop.Exception;
+package com.northcoders.RecordShop.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

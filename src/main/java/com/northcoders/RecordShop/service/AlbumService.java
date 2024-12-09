@@ -5,7 +5,7 @@ import com.northcoders.RecordShop.model.Album;
 import java.util.List;
 import java.util.Optional;
 
-public interface RecordshopService {
+public interface AlbumService {
     List<Album> getAllAlbums();
 
     Optional<Album> getAlbumById(Long id);

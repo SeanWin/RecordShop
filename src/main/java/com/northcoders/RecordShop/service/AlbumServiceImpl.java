@@ -1,8 +1,8 @@
 package com.northcoders.RecordShop.service;
 
-import com.northcoders.RecordShop.Exception.AlbumNotFoundException;
+import com.northcoders.RecordShop.exception.AlbumNotFoundException;
 import com.northcoders.RecordShop.model.Album;
-import com.northcoders.RecordShop.repository.RecordshopRepository;
+import com.northcoders.RecordShop.repository.AlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,41 +11,41 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RecordshopServiceImpl implements RecordshopService{
+public class AlbumServiceImpl implements AlbumService {
 
     @Autowired
-    RecordshopRepository recordshopRepository;
+    AlbumRepository albumRepository;
 
     @Override
     public List<Album> getAllAlbums() {
         List<Album> albums = new ArrayList<>();
-        recordshopRepository.findAll().forEach(albums::add);
+        albumRepository.findAll().forEach(albums::add);
         return albums;
     }
 
     @Override
     public Optional<Album> getAlbumById(Long id) {
-        return recordshopRepository.findById(id);
+        return albumRepository.findById(id);
     }
 
     @Override
     public Album insertAlbum(Album album) {
-        return recordshopRepository.save(album);
+        return albumRepository.save(album);
     }
 
     @Override
     public Album updateAlbumById(Long id, Album newAlbum) {
-        Album album = recordshopRepository.findById(id).orElseThrow(() -> new AlbumNotFoundException("Album not found"));
+        Album album = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundException("Album not found"));
         album.setPrice(newAlbum.getPrice());
         album.setStockCount(newAlbum.getStockCount());
-        return recordshopRepository.save(album);
+        return albumRepository.save(album);
     }
 
     @Override
     public void deleteAlbumById(Long id) {
-        if(!recordshopRepository.existsById(id)){
+        if (!albumRepository.existsById(id)) {
             throw new AlbumNotFoundException("Album not found");
         }
-        recordshopRepository.deleteById(id);
+        albumRepository.deleteById(id);
     }
 }

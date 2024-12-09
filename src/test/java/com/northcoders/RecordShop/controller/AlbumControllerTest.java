@@ -2,10 +2,10 @@ package com.northcoders.RecordShop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.northcoders.RecordShop.Exception.AlbumNotFoundException;
+import com.northcoders.RecordShop.exception.AlbumNotFoundException;
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.model.Genre;
-import com.northcoders.RecordShop.service.RecordshopService;
+import com.northcoders.RecordShop.service.AlbumService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,10 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest
-class RecordshopControllerTest {
+class AlbumControllerTest {
 
     @MockBean
-    private RecordshopService recordshopService;
+    private AlbumService albumService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,10 +59,10 @@ class RecordshopControllerTest {
         Album album2 = Album.builder().id(2L).name("name2").artist("artist2").genre(Genre.CLASSICAL).releaseDate(LocalDate.of(2010, 8, 22)).stockCount(2).price(29.99).build();
         albums.add(album1);
         albums.add(album2);
-        given(recordshopService.getAllAlbums()).willReturn(albums);
+        given(albumService.getAllAlbums()).willReturn(albums);
 
         //when
-        ResultActions response = mockMvc.perform(get("/api/v1/recordshop"));
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums"));
 
         //then
         response.andExpect(status().isOk())
@@ -82,10 +82,10 @@ class RecordshopControllerTest {
     void test_getAlbumById_positive() throws Exception {
         // given
         Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
-        given(recordshopService.getAlbumById(1L)).willReturn(Optional.of(album));
+        given(albumService.getAlbumById(1L)).willReturn(Optional.of(album));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/{id}", 1L));
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums/{id}", 1L));
 
         // then
         response.andExpect(status().isOk())
@@ -100,10 +100,10 @@ class RecordshopControllerTest {
     void test_getAlbumById_negative() throws Exception {
         // given
         Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
-        given(recordshopService.getAlbumById(1L)).willReturn(Optional.empty());
+        given(albumService.getAlbumById(1L)).willReturn(Optional.empty());
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/{id}", 1L));
+        ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums/{id}", 1L));
 
         // then
         response.andExpect(status().isNotFound())
@@ -115,15 +115,15 @@ class RecordshopControllerTest {
     void test_createAlbum_positive() throws Exception {
         Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
 
-        when(recordshopService.insertAlbum(any(Album.class))).thenReturn(album);
+        when(albumService.insertAlbum(any(Album.class))).thenReturn(album);
 
         this.mockMvc.perform(
-                post("/api/v1/recordshop")
+                post("/api/v1/recordshop/albums")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(album)))
                 .andExpect(status().isCreated());
 
-        verify(recordshopService,times(1)).insertAlbum(any(Album.class));
+        verify(albumService,times(1)).insertAlbum(any(Album.class));
     }
 
     @Test
@@ -135,11 +135,11 @@ class RecordshopControllerTest {
                 .stockCount(1).price(19.99d).build();
         Album updatedAlbum = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
                 .stockCount(10).price(29.99d).build();
-        given(recordshopService.getAlbumById(id)).willReturn(Optional.of(savedAlbum));
-        given(recordshopService.updateAlbumById(eq(id), any(Album.class))).willReturn(updatedAlbum);
+        given(albumService.getAlbumById(id)).willReturn(Optional.of(savedAlbum));
+        given(albumService.updateAlbumById(eq(id), any(Album.class))).willReturn(updatedAlbum);
 
         //when
-        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/{id}", id)
+        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/albums/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(updatedAlbum)));
 
@@ -158,11 +158,11 @@ class RecordshopControllerTest {
         long id = 1L;
         Album updatedAlbum = Album.builder().name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
                 .stockCount(10).price(29.99d).build();
-        given(recordshopService.getAlbumById(id)).willReturn(Optional.empty());
-        given(recordshopService.updateAlbumById(eq(id), any(Album.class))).willThrow(new AlbumNotFoundException("Album not found"));
+        given(albumService.getAlbumById(id)).willReturn(Optional.empty());
+        given(albumService.updateAlbumById(eq(id), any(Album.class))).willThrow(new AlbumNotFoundException("Album not found"));
 
         //when
-        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/{id}", id)
+        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/albums/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(updatedAlbum)));
 
@@ -177,10 +177,10 @@ class RecordshopControllerTest {
         //given
         long id= 1L;
 
-        willDoNothing().given(recordshopService).deleteAlbumById(id);
+        willDoNothing().given(albumService).deleteAlbumById(id);
 
        //when
-        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/{id}", id));
+        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/albums/{id}", id));
 
         //then
         response.andExpect(status().isNoContent())
@@ -194,16 +194,16 @@ class RecordshopControllerTest {
         long id = 1L;
         Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
                 .stockCount(1).price(19.99d).build();
-        doThrow(new AlbumNotFoundException("Album not found")).when(recordshopService).deleteAlbumById(id);
+        doThrow(new AlbumNotFoundException("Album not found")).when(albumService).deleteAlbumById(id);
 
         //when
-        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/{id}", id)
+        ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/albums/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(album)));
 
         //then
         response.andExpect(status().isNotFound())
                 .andDo(print());
-        verify(recordshopService, times(1)).deleteAlbumById(id);
+        verify(albumService, times(1)).deleteAlbumById(id);
     }
 }

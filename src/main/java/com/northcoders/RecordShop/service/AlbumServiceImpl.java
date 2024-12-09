@@ -43,7 +43,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void deleteAlbumById(Long id) {
-        if(!albumRepository.existsById(id)){
+        if (!albumRepository.existsById(id)) {
             throw new AlbumNotFoundException("Album not found");
         }
         albumRepository.deleteById(id);

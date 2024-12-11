@@ -7,18 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDate;
+import java.util.List;
 
-
-@Table(name="albums")
+@Table(name="artists")
 @Entity
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Album {
-
+public class Artist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -26,19 +24,9 @@ public class Album {
     @Column(nullable = false)
     public String name;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "artist_id", nullable = false)
-    private Artist artist;
-
-    @Enumerated
-    public Genre genre;
-
     @Column(nullable = false)
-    public LocalDate releaseDate;
+    public String nationality;
 
-    @Column(nullable = false)
-    public Integer stockCount;
-
-    @Column(nullable = false)
-    public Double price;
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
+    private List<Album> albums;
 }

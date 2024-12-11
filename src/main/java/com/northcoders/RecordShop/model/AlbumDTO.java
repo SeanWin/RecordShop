@@ -1,5 +1,6 @@
 package com.northcoders.RecordShop.model;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -11,8 +12,9 @@ public class AlbumDTO {
     @NotEmpty(message = "Name is required")
     public String name;
 
-    @NotEmpty(message = "Artist is required")
-    public String artist;
+    @Valid
+    @NotNull(message = "Artist is required")
+    public ArtistDTO artistDTO;
 
     @NotNull(message = "Genre is required")
     public Genre genre;
@@ -32,7 +34,7 @@ public class AlbumDTO {
     public Album toAlbum(){
         return new Album()
                 .setName(name)
-                .setArtist(artist)
+                .setArtist(artistDTO.toArtist())
                 .setGenre(genre)
                 .setReleaseDate(releaseDate)
                 .setStockCount(stockCount)

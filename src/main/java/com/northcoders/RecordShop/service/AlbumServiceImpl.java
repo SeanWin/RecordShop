@@ -2,7 +2,9 @@ package com.northcoders.RecordShop.service;
 
 import com.northcoders.RecordShop.exception.AlbumNotFoundException;
 import com.northcoders.RecordShop.model.Album;
+import com.northcoders.RecordShop.model.Artist;
 import com.northcoders.RecordShop.repository.AlbumRepository;
+import com.northcoders.RecordShop.repository.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Autowired
     AlbumRepository albumRepository;
+
+    @Autowired
+    ArtistRepository artistRepository;
 
     @Override
     public List<Album> getAllAlbums() {
@@ -30,6 +35,8 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public Album insertAlbum(Album album) {
+        Artist persistedArtist = artistRepository.save(album.getArtist());
+        album.setArtist(persistedArtist);
         return albumRepository.save(album);
     }
 

@@ -1,5 +1,6 @@
 package com.northcoders.RecordShop.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,7 @@ public class Album {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "artist_id", nullable = false)
+    @JsonBackReference
     private Artist artist;
 
     @Enumerated

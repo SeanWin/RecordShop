@@ -1,5 +1,6 @@
 package com.northcoders.RecordShop.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +29,6 @@ public class Artist {
     public String nationality;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Album> albums;
 }

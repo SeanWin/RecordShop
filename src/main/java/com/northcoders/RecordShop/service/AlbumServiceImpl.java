@@ -3,8 +3,11 @@ package com.northcoders.RecordShop.service;
 import com.northcoders.RecordShop.exception.AlbumNotFoundException;
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.model.Artist;
+import com.northcoders.RecordShop.model.Genre;
 import com.northcoders.RecordShop.repository.AlbumRepository;
 import com.northcoders.RecordShop.repository.ArtistRepository;
+import com.northcoders.RecordShop.search.AlbumSearchParameters;
+import com.northcoders.RecordShop.search.AlbumSearchSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +57,17 @@ public class AlbumServiceImpl implements AlbumService {
             throw new AlbumNotFoundException("Album not found");
         }
         albumRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Album> searchAlbums(String artistName, Integer releaseYear, Genre genre, String albumName) {
+        AlbumSearchParameters searchParams = new AlbumSearchParameters();
+        searchParams.setArtistName(artistName);
+        searchParams.setReleaseYear(releaseYear);
+        searchParams.setGenre(genre);
+        searchParams.setAlbumName(albumName);
+
+        AlbumSearchSpecification specification = new AlbumSearchSpecification(searchParams);
+        return albumRepository.findAll(specification);
     }
 }

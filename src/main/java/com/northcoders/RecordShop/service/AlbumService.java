@@ -1,6 +1,7 @@
 package com.northcoders.RecordShop.service;
 
 import com.northcoders.RecordShop.model.Album;
+import com.northcoders.RecordShop.model.Genre;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +16,6 @@ public interface AlbumService {
     Album updateAlbumById(Long id, Album newAlbum);
 
     void deleteAlbumById(Long id);
+
+    List<Album> searchAlbums(String artistName, Integer releaseYear, Genre genre, String albumName);
 }

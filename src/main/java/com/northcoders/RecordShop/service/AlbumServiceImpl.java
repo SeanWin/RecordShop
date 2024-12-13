@@ -8,6 +8,7 @@ import com.northcoders.RecordShop.repository.AlbumRepository;
 import com.northcoders.RecordShop.repository.ArtistRepository;
 import com.northcoders.RecordShop.search.AlbumSearchParameters;
 import com.northcoders.RecordShop.search.AlbumSearchSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +38,13 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public Album insertAlbum(Album album) {
-        Artist persistedArtist = artistRepository.save(album.getArtist());
-        album.setArtist(persistedArtist);
+        Artist artist = artistRepository.findByName(album.getArtist().getName());
+        if(artist==null){
+            artist = artistRepository.save(album.getArtist());
+        }
+        album.setArtist(artist);
         return albumRepository.save(album);
     }
 

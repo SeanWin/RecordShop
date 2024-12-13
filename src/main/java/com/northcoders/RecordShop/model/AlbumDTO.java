@@ -2,10 +2,12 @@ package com.northcoders.RecordShop.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
+@Builder
 @Data
 public class AlbumDTO {
 

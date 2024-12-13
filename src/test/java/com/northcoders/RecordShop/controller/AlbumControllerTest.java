@@ -3,8 +3,7 @@ package com.northcoders.RecordShop.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.northcoders.RecordShop.exception.AlbumNotFoundException;
-import com.northcoders.RecordShop.model.Album;
-import com.northcoders.RecordShop.model.Genre;
+import com.northcoders.RecordShop.model.*;
 import com.northcoders.RecordShop.service.AlbumService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,33 +54,39 @@ class AlbumControllerTest {
     void test_getAllAlbums() throws Exception {
         // given
         List<Album> albums = new ArrayList<>();
-        Album album1 = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
-        Album album2 = Album.builder().id(2L).name("name2").artist("artist2").genre(Genre.CLASSICAL).releaseDate(LocalDate.of(2010, 8, 22)).stockCount(2).price(29.99).build();
+        Artist artist1 = Artist.builder().id(1L).name("The Beatles").nationality("British").build();
+        Artist artist2 = Artist.builder().id(2L).name("Beethoven").nationality("German").build();
+        Album album1 = Album.builder().id(1L).name("Abbey Road").artist(artist1).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        Album album2 = Album.builder().id(2L).name("Symphony No. 9").artist(artist2).genre(Genre.CLASSICAL)
+                .releaseDate(LocalDate.of(2010, 8, 22)).stockCount(2).price(29.99).build();
         albums.add(album1);
         albums.add(album2);
+
         given(albumService.getAllAlbums()).willReturn(albums);
 
-        //when
+        // when
         ResultActions response = mockMvc.perform(get("/api/v1/recordshop/albums"));
 
-        //then
+        // then
         response.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.size()", is(albums.size())))
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("name"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("name2"))
+                .andExpect(jsonPath("$[0].name").value("Abbey Road"))
                 .andExpect(jsonPath("$[0].releaseDate", is("2000-05-15")))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].name").value("Symphony No. 9"))
                 .andExpect(jsonPath("$[1].releaseDate", is("2010-08-22")));
-
     }
 
     @Test
     @DisplayName("GET album by id positive")
     void test_getAlbumById_positive() throws Exception {
         // given
-        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        Artist artist = Artist.builder().id(1L).name("The Beatles").nationality("British").build();
+        Album album = Album.builder().id(1L).name("Abbey Road").artist(artist).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
         given(albumService.getAlbumById(1L)).willReturn(Optional.of(album));
 
         // when
@@ -92,14 +97,13 @@ class AlbumControllerTest {
                 .andDo(print())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is(album.getName())))
-                .andExpect(jsonPath("$.artist", is(album.getArtist())));
+                .andExpect(jsonPath("$.genre", is(String.valueOf(album.getGenre()))));
     }
 
     @Test
     @DisplayName("GET album by id negative")
     void test_getAlbumById_negative() throws Exception {
         // given
-        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
         given(albumService.getAlbumById(1L)).willReturn(Optional.empty());
 
         // when
@@ -113,37 +117,57 @@ class AlbumControllerTest {
     @Test
     @DisplayName("POST album positive")
     void test_createAlbum_positive() throws Exception {
-        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99d).build();
+        //given
+        ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
+        AlbumDTO albumDTO = AlbumDTO.builder().name("Abbey Road").artistDTO(artistDTO).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
 
-        when(albumService.insertAlbum(any(Album.class))).thenReturn(album);
+        Album createdAlbum = Album.builder().id(1L).name("Abbey Road").artist(Artist.builder()
+                        .id(1L).name("The Beatles").nationality("British").build()).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+
+        //when
+        when(albumService.insertAlbum(any(Album.class))).thenReturn(createdAlbum);
 
         this.mockMvc.perform(
-                post("/api/v1/recordshop/albums")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(album)))
+                        post("/api/v1/recordshop/albums")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(albumDTO)))
                 .andExpect(status().isCreated());
 
-        verify(albumService,times(1)).insertAlbum(any(Album.class));
+        //then
+        verify(albumService, times(1)).insertAlbum(any(Album.class));
     }
 
     @Test
     @DisplayName("PUT album positive")
-    public void test_updateAlbum_positive() throws Exception{
-        //given
+    public void test_updateAlbum_positive() throws Exception {
+        // given
         long id = 1L;
-        Album savedAlbum = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
-                .stockCount(1).price(19.99d).build();
-        Album updatedAlbum = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
-                .stockCount(10).price(29.99d).build();
+
+        ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
+        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artistDTO(artistDTO).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(10).price(29.99).build();
+
+        Album savedAlbum = Album.builder().id(1L).name("Abbey Road").artist(
+                        Artist.builder().id(1L).name("The Beatles").nationality("British").build())
+                .genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+
+        Album updatedAlbum = Album.builder().id(1L).name("Abbey Road").artist(
+                        Artist.builder().id(1L).name("The Beatles").nationality("British").build())
+                .genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(10).price(29.99).build();
+
         given(albumService.getAlbumById(id)).willReturn(Optional.of(savedAlbum));
         given(albumService.updateAlbumById(eq(id), any(Album.class))).willReturn(updatedAlbum);
 
-        //when
-        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/albums/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(updatedAlbum)));
+        // when
+        ResultActions response = mockMvc.perform(
+                put("/api/v1/recordshop/albums/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(updatedAlbumDTO))
+        );
 
-        //then
+        // then
         response.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name", is(updatedAlbum.getName())))
@@ -153,20 +177,26 @@ class AlbumControllerTest {
 
     @DisplayName("PUT album negative")
     @Test
-    public void test_updateAlbum_negative() throws Exception{
-        //given
+    public void test_updateAlbum_negative() throws Exception {
+        // given
         long id = 1L;
-        Album updatedAlbum = Album.builder().name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
-                .stockCount(10).price(29.99d).build();
+
+        ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
+        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artistDTO(artistDTO).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+
         given(albumService.getAlbumById(id)).willReturn(Optional.empty());
-        given(albumService.updateAlbumById(eq(id), any(Album.class))).willThrow(new AlbumNotFoundException("Album not found"));
+        given(albumService.updateAlbumById(eq(id), any(Album.class)))
+                .willThrow(new AlbumNotFoundException("Album not found"));
 
-        //when
-        ResultActions response = mockMvc.perform(put("/api/v1/recordshop/albums/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(updatedAlbum)));
+        // when
+        ResultActions response = mockMvc.perform(
+                put("/api/v1/recordshop/albums/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(updatedAlbumDTO))
+        );
 
-        //then
+        // then
         response.andExpect(status().isNotFound())
                 .andDo(print());
     }
@@ -187,13 +217,14 @@ class AlbumControllerTest {
                 .andDo(print());
     }
 
-    @DisplayName("Negative test for deleteAlbumById method")
+    @DisplayName("DELETE album negative")
     @Test
     public void test_deleteAlbumById_negative() throws Exception {
         // given
         long id = 1L;
-        Album album = Album.builder().id(1L).name("name").artist("artist").genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15))
-                .stockCount(1).price(19.99d).build();
+        Artist artist = Artist.builder().id(1L).name("The Beatles").nationality("British").build();
+        Album album = Album.builder().id(1L).name("Abbey Road").artist(artist).genre(Genre.BLUES)
+                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
         doThrow(new AlbumNotFoundException("Album not found")).when(albumService).deleteAlbumById(id);
 
         //when

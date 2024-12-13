@@ -2,6 +2,7 @@ package com.northcoders.RecordShop.controller;
 
 import com.northcoders.RecordShop.model.Album;
 import com.northcoders.RecordShop.model.AlbumDTO;
+import com.northcoders.RecordShop.model.Genre;
 import com.northcoders.RecordShop.service.AlbumService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,18 @@ public class AlbumController {
     public ResponseEntity<String> deleteAlbum(@PathVariable("id") long id){
         albumService.deleteAlbumById(id);
         return new ResponseEntity<>("Album deleted successfully!.", HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchAlbums(@RequestParam(required = false) String artistName,
+                                          @RequestParam(required = false) Integer releaseYear,
+                                          @RequestParam(required = false) Genre genre,
+                                          @RequestParam(required = false) String albumName){
+        List<Album> albums = albumService.searchAlbums(artistName,releaseYear,genre,albumName);
+        if(albums.isEmpty()){
+            return new ResponseEntity<>("No results for your search",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(albums,HttpStatus.OK);
     }
 
 }

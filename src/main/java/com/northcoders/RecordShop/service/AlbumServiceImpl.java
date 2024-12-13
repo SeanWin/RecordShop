@@ -2,7 +2,13 @@ package com.northcoders.RecordShop.service;
 
 import com.northcoders.RecordShop.exception.AlbumNotFoundException;
 import com.northcoders.RecordShop.model.Album;
+import com.northcoders.RecordShop.model.Artist;
+import com.northcoders.RecordShop.model.Genre;
 import com.northcoders.RecordShop.repository.AlbumRepository;
+import com.northcoders.RecordShop.repository.ArtistRepository;
+import com.northcoders.RecordShop.search.AlbumSearchParameters;
+import com.northcoders.RecordShop.search.AlbumSearchSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Autowired
     AlbumRepository albumRepository;
+
+    @Autowired
+    ArtistRepository artistRepository;
 
     @Override
     public List<Album> getAllAlbums() {
@@ -29,7 +38,13 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public Album insertAlbum(Album album) {
+        Artist artist = artistRepository.findByName(album.getArtist().getName());
+        if(artist==null){
+            artist = artistRepository.save(album.getArtist());
+        }
+        album.setArtist(artist);
         return albumRepository.save(album);
     }
 
@@ -47,5 +62,17 @@ public class AlbumServiceImpl implements AlbumService {
             throw new AlbumNotFoundException("Album not found");
         }
         albumRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Album> searchAlbums(String artistName, Integer releaseYear, Genre genre, String albumName) {
+        AlbumSearchParameters searchParams = new AlbumSearchParameters();
+        searchParams.setArtistName(artistName);
+        searchParams.setReleaseYear(releaseYear);
+        searchParams.setGenre(genre);
+        searchParams.setAlbumName(albumName);
+
+        AlbumSearchSpecification specification = new AlbumSearchSpecification(searchParams);
+        return albumRepository.findAll(specification);
     }
 }

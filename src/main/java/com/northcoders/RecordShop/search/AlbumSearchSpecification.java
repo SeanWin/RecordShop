@@ -22,7 +22,7 @@ public class AlbumSearchSpecification implements Specification<Album> {
     public Predicate toPredicate(Root<Album> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (params.getArtistName() != null && !params.getArtistName().isEmpty()) {
+        if (params.getArtistName() != null) {
             predicates.add( builder.like(builder.lower(root.get("artist").get("name")),
                     "%" + params.getArtistName().toLowerCase() + "%"));
         }
@@ -32,7 +32,7 @@ public class AlbumSearchSpecification implements Specification<Album> {
         if (params.getGenre() != null) {
             predicates.add(builder.equal(root.get("genre"), params.getGenre()));
         }
-        if (params.getAlbumName() != null && !params.getAlbumName().isEmpty()) {
+        if (params.getAlbumName() != null) {
             predicates.add(builder.like(builder.lower(root.get("name")),
                     "%" + params.getAlbumName().toLowerCase() + "%"));
         }

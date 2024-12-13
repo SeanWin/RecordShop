@@ -140,6 +140,32 @@ class AlbumControllerTest {
     }
 
     @Test
+    @DisplayName("POST album negative")
+    void test_createAlbum_negative() throws Exception {
+        // AlbumDTO with invalid fields
+        ArtistDTO artistDTO = ArtistDTO.builder().name("").nationality("British").build(); // Invalid: Empty name
+        AlbumDTO albumDTO = AlbumDTO.builder()
+                .name("") // Invalid: Empty name
+                .artistDTO(artistDTO)
+                .genre(Genre.BLUES)
+                .releaseDate(null) // Invalid: Null release date
+                .stockCount(-1) // Invalid: Negative stock count
+                .price(-19.99) // Invalid: Negative price
+                .build();
+
+        // when
+        this.mockMvc.perform(
+                        post("/api/v1/recordshop/albums")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(albumDTO)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        // then
+        verify(albumService, times(0)).insertAlbum(any(Album.class));
+    }
+
+    @Test
     @DisplayName("PUT album positive")
     public void test_updateAlbum_positive() throws Exception {
         // given

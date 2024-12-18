@@ -119,7 +119,7 @@ class AlbumControllerTest {
     void test_createAlbum_positive() throws Exception {
         //given
         ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
-        AlbumDTO albumDTO = AlbumDTO.builder().name("Abbey Road").artistDTO(artistDTO).genre(Genre.BLUES)
+        AlbumDTO albumDTO = AlbumDTO.builder().name("Abbey Road").artist(artistDTO).genre(Genre.BLUES)
                 .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
 
         Album createdAlbum = Album.builder().id(1L).name("Abbey Road").artist(Artist.builder()
@@ -146,7 +146,7 @@ class AlbumControllerTest {
         ArtistDTO artistDTO = ArtistDTO.builder().name("").nationality("British").build(); // Invalid: Empty name
         AlbumDTO albumDTO = AlbumDTO.builder()
                 .name("") // Invalid: Empty name
-                .artistDTO(artistDTO)
+                .artist(artistDTO)
                 .genre(Genre.BLUES)
                 .releaseDate(null) // Invalid: Null release date
                 .stockCount(-1) // Invalid: Negative stock count
@@ -172,7 +172,7 @@ class AlbumControllerTest {
         long id = 1L;
 
         ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
-        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artistDTO(artistDTO).genre(Genre.BLUES)
+        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artist(artistDTO).genre(Genre.BLUES)
                 .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(10).price(29.99).build();
 
         Album savedAlbum = Album.builder().id(1L).name("Abbey Road").artist(
@@ -208,7 +208,7 @@ class AlbumControllerTest {
         long id = 1L;
 
         ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
-        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artistDTO(artistDTO).genre(Genre.BLUES)
+        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artist(artistDTO).genre(Genre.BLUES)
                 .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
 
         given(albumService.getAlbumById(id)).willReturn(Optional.empty());

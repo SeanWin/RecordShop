@@ -16,7 +16,7 @@ public class AlbumDTO {
 
     @Valid
     @NotNull(message = "Artist is required")
-    public ArtistDTO artistDTO;
+    public ArtistDTO artist;
 
     @NotNull(message = "Genre is required")
     public Genre genre;
@@ -36,7 +36,7 @@ public class AlbumDTO {
     public Album toAlbum(){
         return new Album()
                 .setName(name)
-                .setArtist(artistDTO.toArtist())
+                .setArtist(artist.toArtist())
                 .setGenre(genre)
                 .setReleaseDate(releaseDate)
                 .setStockCount(stockCount)

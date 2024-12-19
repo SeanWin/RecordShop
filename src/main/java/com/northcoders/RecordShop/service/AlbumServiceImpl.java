@@ -51,8 +51,17 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public Album updateAlbumById(Long id, Album newAlbum) {
         Album album = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundException("Album not found"));
+        album.setName(newAlbum.getName());
+        album.setGenre(newAlbum.getGenre());
+        album.setReleaseDate(newAlbum.getReleaseDate());
         album.setPrice(newAlbum.getPrice());
         album.setStockCount(newAlbum.getStockCount());
+
+        Artist artist = artistRepository.findByName(newAlbum.getArtist().getName());
+        if(artist==null){
+            artist = artistRepository.save(newAlbum.getArtist());
+        }
+        album.setArtist(artist);
         return albumRepository.save(album);
     }
 

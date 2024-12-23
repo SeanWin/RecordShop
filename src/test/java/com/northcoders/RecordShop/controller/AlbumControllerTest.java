@@ -239,7 +239,7 @@ class AlbumControllerTest {
         ResultActions response = mockMvc.perform(delete("/api/v1/recordshop/albums/{id}", id));
 
         //then
-        response.andExpect(status().isNoContent())
+        response.andExpect(status().isOk())
                 .andDo(print());
     }
 

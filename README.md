@@ -48,7 +48,8 @@ best practices, and a scalable design.
    ```
 2. Open project in preferred IDE (eg IntelliJ)
 3. (optional, if you plan to use PostgreSQL) 
-   - Update `application-prod.properties` file with your username and password 
+   - Run the following command in the terminal `cp src/main/resources/application-prod-template.properties src/main/resources/application-prod.properties`
+   - Update `application-prod.properties` file with own PostgreSQL credentials.
    -  Set `spring.profiles.active=prod` in `application.properties` file.
 4. Run the application
 5. Access the API

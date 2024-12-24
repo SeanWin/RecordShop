@@ -39,7 +39,7 @@ build/
 *.class
 
 ### Spring Configuration Files ###
-application.properties
+
 
 ### JVM Crash Logs ###
 hs_err_pid*

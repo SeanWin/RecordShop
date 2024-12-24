@@ -1,6 +1,11 @@
 # Record Shop API
 
-This project is a **Record Shop API** built with Java and Spring Boot. It allows managing albums, artists, and their relationships, providing endpoints for CRUD operations, searching, and more.
+The **Record Shop API** provides a robust backend for managing a record shop's inventory.
+It supports full CRUD operations for albums, along with additional features like API health checks and advanced
+filtering of albums based on various criteria.
+
+Built with **Java** and **Spring Boot**, the application emphasises clean architecture,
+best practices, and a scalable design.
 
 
 ---

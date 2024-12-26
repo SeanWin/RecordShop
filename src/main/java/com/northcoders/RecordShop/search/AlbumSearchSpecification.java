@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class AlbumSearchSpecification implements Specification<Album> {
                     "%" + params.getArtistName().toLowerCase() + "%"));
         }
         if (params.getReleaseYear() != null) {
-            predicates.add(builder.equal(builder.function("YEAR", Integer.class, root.get("releaseDate")), params.getReleaseYear()));
+            predicates.add(builder.equal(((HibernateCriteriaBuilder) builder).year(root.get("releaseDate")), params.getReleaseYear()));
         }
         if (params.getGenre() != null) {
             predicates.add(builder.equal(root.get("genre"), params.getGenre()));

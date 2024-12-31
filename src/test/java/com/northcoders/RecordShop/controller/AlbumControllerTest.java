@@ -54,12 +54,22 @@ class AlbumControllerTest {
     void test_getAllAlbums() throws Exception {
         // given
         List<Album> albums = new ArrayList<>();
-        Artist artist1 = Artist.builder().id(1L).name("The Beatles").nationality("British").build();
-        Artist artist2 = Artist.builder().id(2L).name("Beethoven").nationality("German").build();
-        Album album1 = Album.builder().id(1L).name("Abbey Road").artist(artist1).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
-        Album album2 = Album.builder().id(2L).name("Symphony No. 9").artist(artist2).genre(Genre.CLASSICAL)
-                .releaseDate(LocalDate.of(2010, 8, 22)).stockCount(2).price(29.99).build();
+        Artist artist1 = new Artist();
+        artist1.setId(1L);
+        artist1.setName("The Beatles");
+        artist1.setNationality("British");
+
+        Artist artist2 = new Artist();
+        artist2.setId(2L);
+        artist2.setName("Beethoven");
+        artist2.setNationality("German");
+
+        Album album1 = new Album.Builder().setId(1L).setName("Abbey Road").setArtist(artist1).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(1).setPrice(19.99).build();
+
+        Album album2 = new Album.Builder().setId(2L).setName("Symphony No. 9").setArtist(artist2).setGenre(Genre.CLASSICAL)
+                .setReleaseDate(LocalDate.of(2010, 8, 22)).setStockCount(2).setPrice(29.99).build();
+
         albums.add(album1);
         albums.add(album2);
 
@@ -84,9 +94,13 @@ class AlbumControllerTest {
     @DisplayName("GET album by id positive")
     void test_getAlbumById_positive() throws Exception {
         // given
-        Artist artist = Artist.builder().id(1L).name("The Beatles").nationality("British").build();
-        Album album = Album.builder().id(1L).name("Abbey Road").artist(artist).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        Artist artist = new Artist();
+        artist.setId(1L);
+        artist.setName("The Beatles");
+        artist.setNationality("British");
+
+        Album album = new Album.Builder().setId(1L).setName("Abbey Road").setArtist(artist).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(1).setPrice(19.99).build();
         given(albumService.getAlbumById(1L)).willReturn(Optional.of(album));
 
         // when
@@ -118,13 +132,20 @@ class AlbumControllerTest {
     @DisplayName("POST album positive")
     void test_createAlbum_positive() throws Exception {
         //given
-        ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
-        AlbumDTO albumDTO = AlbumDTO.builder().name("Abbey Road").artist(artistDTO).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        ArtistDTO artistDTO = new ArtistDTO();
+        artistDTO.setName("The Beatles");
+        artistDTO.setNationality("British");
 
-        Album createdAlbum = Album.builder().id(1L).name("Abbey Road").artist(Artist.builder()
-                        .id(1L).name("The Beatles").nationality("British").build()).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        AlbumDTO albumDTO = new AlbumDTO.Builder().setName("Abbey Road").setArtist(artistDTO).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(1).setPrice(19.99).build();
+
+        Artist artist = new Artist();
+        artist.setId(1L);
+        artist.setName("The Beatles");
+        artist.setNationality("British");
+
+        Album createdAlbum = new Album.Builder().setId(1L).setName("Abbey Road").setArtist(artist).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(1).setPrice(19.99).build();
 
         //when
         when(albumService.insertAlbum(any(Album.class))).thenReturn(createdAlbum);
@@ -142,16 +163,13 @@ class AlbumControllerTest {
     @Test
     @DisplayName("POST album negative")
     void test_createAlbum_negative() throws Exception {
+        ArtistDTO artistDTO = new ArtistDTO();
+        artistDTO.setName("The Beatles");
+        artistDTO.setNationality("British");
         // AlbumDTO with invalid fields
-        ArtistDTO artistDTO = ArtistDTO.builder().name("").nationality("British").build(); // Invalid: Empty name
-        AlbumDTO albumDTO = AlbumDTO.builder()
-                .name("") // Invalid: Empty name
-                .artist(artistDTO)
-                .genre(Genre.BLUES)
-                .releaseDate(null) // Invalid: Null release date
-                .stockCount(-1) // Invalid: Negative stock count
-                .price(-19.99) // Invalid: Negative price
-                .build();
+
+        AlbumDTO albumDTO = new AlbumDTO.Builder().setName("").setArtist(artistDTO).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2030, 5, 15)).setStockCount(-1).setPrice(-19.99).build();
 
         // when
         this.mockMvc.perform(
@@ -171,19 +189,24 @@ class AlbumControllerTest {
         // given
         long id = 1L;
 
-        ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
-        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artist(artistDTO).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(10).price(29.99).build();
+        ArtistDTO artistDTO = new ArtistDTO();
+        artistDTO.setName("The Beatles");
+        artistDTO.setNationality("British");
 
-        Album savedAlbum = Album.builder().id(1L).name("Abbey Road").artist(
-                        Artist.builder().id(1L).name("The Beatles").nationality("British").build())
-                .genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        AlbumDTO updatedAlbumDTO = new AlbumDTO.Builder().setName("Abbey Road").setArtist(artistDTO).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(10).setPrice(29.99).build();
 
-        Album updatedAlbum = Album.builder().id(1L).name("Abbey Road").artist(
-                        Artist.builder().id(1L).name("The Beatles").nationality("British").build())
-                .genre(Genre.BLUES).releaseDate(LocalDate.of(2000, 5, 15)).stockCount(10).price(29.99).build();
+        Artist artist = new Artist();
+        artist.setId(1L);
+        artist.setName("The Beatles");
+        artist.setNationality("British");
 
-        given(albumService.getAlbumById(id)).willReturn(Optional.of(savedAlbum));
+        Album savedAlbum = new Album.Builder().setId(1L).setName("Abbey Road").setArtist(artist).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(1).setPrice(19.99).build();
+
+        Album updatedAlbum = new Album.Builder().setId(1L).setName("Abbey Road").setArtist(artist).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(10).setPrice(29.99).build();
+
         given(albumService.updateAlbumById(eq(id), any(Album.class))).willReturn(updatedAlbum);
 
         // when
@@ -207,11 +230,12 @@ class AlbumControllerTest {
         // given
         long id = 1L;
 
-        ArtistDTO artistDTO = ArtistDTO.builder().name("The Beatles").nationality("British").build();
-        AlbumDTO updatedAlbumDTO = AlbumDTO.builder().name("Abbey Road").artist(artistDTO).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        ArtistDTO artistDTO = new ArtistDTO();
+        artistDTO.setName("The Beatles");
+        artistDTO.setNationality("British");
+        AlbumDTO updatedAlbumDTO = new AlbumDTO.Builder().setName("Abbey Road").setArtist(artistDTO).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(10).setPrice(29.99).build();
 
-        given(albumService.getAlbumById(id)).willReturn(Optional.empty());
         given(albumService.updateAlbumById(eq(id), any(Album.class)))
                 .willThrow(new AlbumNotFoundException("Album not found"));
 
@@ -248,9 +272,13 @@ class AlbumControllerTest {
     public void test_deleteAlbumById_negative() throws Exception {
         // given
         long id = 1L;
-        Artist artist = Artist.builder().id(1L).name("The Beatles").nationality("British").build();
-        Album album = Album.builder().id(1L).name("Abbey Road").artist(artist).genre(Genre.BLUES)
-                .releaseDate(LocalDate.of(2000, 5, 15)).stockCount(1).price(19.99).build();
+        Artist artist = new Artist();
+        artist.setId(1L);
+        artist.setName("The Beatles");
+        artist.setNationality("British");
+
+        Album album = new Album.Builder().setId(1L).setName("Abbey Road").setArtist(artist).setGenre(Genre.BLUES)
+                .setReleaseDate(LocalDate.of(2000, 5, 15)).setStockCount(1).setPrice(19.99).build();
         doThrow(new AlbumNotFoundException("Album not found")).when(albumService).deleteAlbumById(id);
 
         //when

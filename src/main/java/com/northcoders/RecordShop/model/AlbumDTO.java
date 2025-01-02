@@ -18,7 +18,7 @@ public class AlbumDTO {
     private Genre genre;
 
     @NotNull(message = "The release date is required.")
-    @Past(message = "The release date must be in the past.")
+    @PastOrPresent(message = "The release date must be in the past or present")
     private LocalDate releaseDate;
 
     @NotNull(message = "Stock count is required")
@@ -53,11 +53,11 @@ public class AlbumDTO {
         this.genre = genre;
     }
 
-    public @NotNull(message = "The release date is required.") @Past(message = "The release date must be in the past.") LocalDate getReleaseDate() {
+    public @NotNull(message = "The release date is required.") @PastOrPresent(message = "The release date must be in the past.") LocalDate getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(@NotNull(message = "The release date is required.") @Past(message = "The release date must be in the past.") LocalDate releaseDate) {
+    public void setReleaseDate(@NotNull(message = "The release date is required.") @PastOrPresent(message = "The release date must be in the past.") LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 
